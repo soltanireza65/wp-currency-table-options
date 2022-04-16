@@ -16,7 +16,7 @@ add_action("rest_api_init", function () {
 #region filter_currencies
 function filter_currencies() {
     $pp_opts                = get_option('pp_opts');
-    $currencies             = $pp_opts['crypto_currencies'];
+    $currencies             = $pp_opts['currencies'];
     $q                      = explode(',', sanitize_text_field($_GET['code']));
 
     $codes                  = [];
@@ -70,7 +70,6 @@ function filter_cryptocurrencies() {
         $price              = $value['price'];
         $profit             = $value['profit'];
         $codes[]            = $code;
-        // $uniq_ids[]         = $uniq_id;
 
         if (in_array($uniq_id, $q)) {
             $options[] = [
