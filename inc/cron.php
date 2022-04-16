@@ -1,7 +1,5 @@
 <?php
 
-use function PHPSTORM_META\type;
-
 $pp_opts = get_option('pp_opts');
 
 $is_remote = $pp_opts['is_remote'];
@@ -13,7 +11,6 @@ $crypto_is_remote = $pp_opts['crypto_is_remote'];
 // die();
 
 #region update_currencies
-// Check if its optimized
 if ($is_remote) {
     if (!wp_next_scheduled('update_currencies_hook')) wp_schedule_event(time(), 'currencies', 'update_currencies_hook');
     add_action('update_currencies_hook', 'update_currencies');
@@ -27,16 +24,8 @@ if ($is_remote) {
         $cmc_single_settings_options = get_option('cmc_single_settings_options');
         $cmc_single_settings_options = unserialize($cmc_single_settings_options, []);
 
-        $reccurence = $pp_opts['reccurence'];
         $currencies = $pp_opts['currencies'];
-
         $service_provider = $pp_opts['service_provider'];
-        // $codes = [];
-        // $result = [];
-        // $data = [];
-        // $page = 1;
-        // $hasNextPage = true;
-
 
         switch ($service_provider) {
             case 'tgju':
@@ -46,18 +35,15 @@ if ($is_remote) {
                 $hasNextPage = true;
                 while ($hasNextPage) {
                     $url = 'https://api.tgju.online/v1/data/sana/json/?page=' . $page;
-                    $data = wp_remote_get(esc_url($url), [
+                    $body = wp_remote_retrieve_body(wp_remote_get(esc_url($url), [
                         'headers' => [
                             'Authorization' => 'Bearer ' . $token,
                         ],
-                    ]);
-                    $body = wp_remote_retrieve_body($data);
+                    ]));
+
                     $decoded = json_decode($body, true);
                     $tempData = $decoded['common']['data'];
-                    // echo "<pre>";
-                    // print_r($decoded['common']['data']);
-                    // echo "</pre>";
-                    // die();
+
                     $data = array_merge($data, $tempData);
                     $hasNextPage = $decoded['common']['next_page_url'] === null ? false : true;
                     $page = $page + 1;
@@ -71,14 +57,13 @@ if ($is_remote) {
                     foreach ($data as $_ => $value) {
                         $slug = $value['slug'];
                         $p = $value['p'];
-
                         if ($code == $slug) {
                             $pp_opts['currencies'][$index]['price'] = $p;
                             $pp_opts['currencies'][$index]['updated_at'] = (new \DateTime())->format('Y-m-d H:i:s');
                         }
                     }
                     if ($code == "sana_sell_usd") {
-                        $cmc_single_settings_options['coin_market_cap_gold_toman_price_setting_option'] = $currency['price'];;
+                        $cmc_single_settings_options['coin_market_cap_gold_toman_price_setting_option'] = $currency['price'];
                     }
                 }
 
@@ -87,7 +72,6 @@ if ($is_remote) {
 
 
                 update_option('pp_opts', $pp_opts);
-                echo "update_currencies_hook";
                 update_option('cmc_single_settings_options', $cmc_single_settings_options);
                 break;
             case 'parsijoo':
@@ -96,10 +80,6 @@ if ($is_remote) {
 
                 $encoded = json_encode($data);
                 $decoded = json_decode($encoded, true);
-                // echo "<pre>";
-                // print_r($decoded['sadana-services']['price-service']['item']);
-                // echo "</pre>";
-                // die();
                 $items = $decoded['sadana-services']['price-service']['item'] ?? [];
 
                 if (!is_array($items) || empty($items) || count($items) < 1) return;
