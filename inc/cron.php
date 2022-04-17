@@ -9,6 +9,11 @@ $crypto_is_remote = $pp_opts['crypto_is_remote'];
 // print_r($crypto_currencies);
 // echo "</pre>";
 // die();
+function convert($input) {
+    $persian = ['۰', '۱', '۲', '۳', '۴', '٤', '۵', '٥', '٦', '۶', '۷', '۸', '۹'];
+    $english = [0,  1,  2,  3,  4,  4,  5,  5,  6,  6,  7,  8,  9];
+    return str_replace($persian, $english, $input);
+}
 
 #region update_currencies
 if ($is_remote) {
@@ -85,13 +90,14 @@ if ($is_remote) {
                 if (!is_array($items) || empty($items) || count($items) < 1) return;
 
                 foreach ($currencies as $index => $currency) {
-                    $code = $currency['code'];
-                    $parsijoo_title = $currency['parsijoo_title'];
-                    $codes[] = $code;
+                    $code               = $currency['code'];
+                    $parsijoo_title     = $currency['parsijoo_title'];
+                    $codes[]            = $code;
 
                     foreach ($items as $_ => $value) {
-                        $name = $value['name'];
-                        $price = $value['price'];
+                        $name           = $value['name'];
+                        $price          = str_replace(",", "", $value['price']);
+                        $price          = convert($price);
                         if ($parsijoo_title == $name) {
                             $pp_opts['currencies'][$index]['price'] = $price;
                             $pp_opts['currencies'][$index]['updated_at'] = (new \DateTime())->format('Y-m-d H:i:s');
@@ -110,7 +116,7 @@ if ($is_remote) {
         }
     }
 }
-// update_currencies();
+update_currencies();
 #endregion
 
 #region update_crypto_currencies

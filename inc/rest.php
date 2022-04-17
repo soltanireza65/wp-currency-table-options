@@ -21,15 +21,21 @@ function filter_currencies() {
 
     $codes                  = [];
     $options                = [];
-
     foreach ($currencies as $key => $value) {
         $code               = $value['code'];
         $title              = $value['title'];
         $price              = $value['price'];
         $profit             = $value['profit'];
+        // $price              = intval($value['price']);
+        // $profit             = intval($value['profit']);
 
         $codes[]            = $code;
-
+        // echo "<pre>";
+        // // print_r($crypto_currencies);
+        // echo  $price;
+        // // echo  $profit;
+        // echo "</pre>";
+        // die();
         if (in_array($code, $q)) {
             $options[]      = [
                 "text"      => $title,
@@ -38,6 +44,10 @@ function filter_currencies() {
             ];
         }
     }
+    // echo "<pre>";
+    // print_r($options);
+    // echo "</pre>";
+    // die();
 
     return [
         "q"                 => $q,

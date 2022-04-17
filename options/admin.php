@@ -89,13 +89,13 @@ CSF::createSection($prefix, array(
         ],
         [
           'id' => 'price',
-          'type' => 'number',
+          'type' => 'text',
           'title' => 'نرخ ارز',
           'default' => 0,
         ],
         [
           'id' => 'profit',
-          'type' => 'number',
+          'type' => 'text',
           'title' => 'کارمزد ارز',
           'default' => 0,
         ],
@@ -202,13 +202,13 @@ CSF::createSection($prefix, array(
         ],
         [
           'id' => 'price',
-          'type' => 'number',
+          'type' => 'text',
           'title' => 'نرخ رمز ارز',
           'default' => 0,
         ],
         [
           'id' => 'profit',
-          'type' => 'number',
+          'type' => 'text',
           'title' => 'کارمزد رمز ارز',
           'default' => 0,
         ],
